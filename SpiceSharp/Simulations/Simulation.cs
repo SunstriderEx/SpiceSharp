@@ -149,17 +149,24 @@ namespace SpiceSharp.Simulations
             Name = name;
         }
 
+        protected bool StepByStepSimulation { get; private set; }
+
+        public virtual void Run(Circuit circuit) => Run(circuit, false);
+
         /// <summary>
         /// Runs the simulation on the specified circuit.
         /// </summary>
         /// <param name="circuit">The circuit to simulate.</param>
+        /// <param name="stepByStep">Do simulation step by step via DoTick() (don't Finalize)</param>
         /// <exception cref="ArgumentNullException">circuit</exception>
         /// <exception cref="CircuitException">{0}: No circuit nodes for simulation".FormatString(Name)</exception>
-        public virtual void Run(EntityCollection entities)
+        public virtual void Run(EntityCollection entities, bool stepByStep)
         {
             if (entities == null)
                 throw new ArgumentNullException(nameof(entities));
-            
+
+            StepByStepSimulation = stepByStep;
+
             // Setup the simulation
             OnBeforeSetup(EventArgs.Empty);
             Status = Statuses.Setup;
@@ -190,7 +197,15 @@ namespace SpiceSharp.Simulations
                 if (afterArgs.Repeat)
                     beforeArgs = new BeforeExecuteEventArgs(true);
             } while (afterArgs.Repeat);
+            if (!StepByStepSimulation)
+                FinalizeSimulation();
+        }
 
+        /// <summary>
+        /// Finalize the simulation
+        /// </summary>
+        public virtual void FinalizeSimulation()
+        {
             // Clean up the circuit
             OnBeforeUnsetup(EventArgs.Empty);
             Status = Statuses.Unsetup;
@@ -203,7 +218,7 @@ namespace SpiceSharp.Simulations
         /// <summary>
         /// Set up the simulation.
         /// </summary>
-        /// <param name="circuit">The circuit containing the entities that are included in the simulation.</param>
+        /// <param name="entities">Entities that are included in the simulation.</param>
         /// <exception cref="ArgumentNullException">circuit</exception>
         /// <exception cref="CircuitException">{0}: No circuit objects for simulation".FormatString(Name)</exception>
         protected virtual void Setup(EntityCollection entities)
