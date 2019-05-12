@@ -46,7 +46,24 @@ namespace SpiceSharp.Algebra.Solve
         /// <summary>
         /// Gets the magnitude method.
         /// </summary>
-        public Func<T, double> Magnitude { get; private set; }
+        public static double Magnitude<TValue>(TValue value)
+        {
+            if (typeof(TValue) == typeof(System.Numerics.Complex))
+            {
+                var val = (System.Numerics.Complex) Convert.ChangeType(value, typeof(System.Numerics.Complex));
+                return Math.Abs(val.Real) + Math.Abs(val.Imaginary);
+            }
+            else if (typeof(TValue) == typeof(double))
+            {
+                return Math.Abs(Convert.ToDouble(value));
+            }
+            else
+            {
+                throw new ArgumentException("Magnitude argument's type is not either 'Complex' or 'Double'", nameof(value));
+            }
+        }
+        //public static double Magnitude(double value) => Math.Abs(value);
+        //public static double Magnitude(System.Numerics.Complex value) => Math.Abs(value.Real) + Math.Abs(value.Imaginary);
 
         /// <summary>
         /// Gets the strategies used for finding a pivot.
@@ -190,14 +207,11 @@ namespace SpiceSharp.Algebra.Solve
         /// <param name="matrix">The matrix.</param>
         /// <param name="rhs">The right-hand side vector.</param>
         /// <param name="eliminationStep">The current elimination step.</param>
-        /// <param name="magnitude">The method used to determine the magnitude of an element.</param>
         /// <exception cref="ArgumentNullException">matrix</exception>
-        public override void Setup(SparseMatrix<T> matrix, SparseVector<T> rhs, int eliminationStep, Func<T, double> magnitude)
+        public override void Setup(SparseMatrix<T> matrix, SparseVector<T> rhs, int eliminationStep)
         {
             if (matrix == null)
                 throw new ArgumentNullException(nameof(matrix));
-
-            Magnitude = magnitude;
 
             // Initialize Markowitz row, column and product vectors if necessary
             if (_markowitzRow == null || _markowitzRow.Length != matrix.Size + 1)

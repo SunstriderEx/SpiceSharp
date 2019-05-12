@@ -58,7 +58,7 @@ namespace SpiceSharp.Algebra.Solve
                     continue;
 
                 // Get the magnitude
-                var magnitude = markowitz.Magnitude(diagonal.Value);
+                var magnitude = Markowitz<T>.Magnitude(diagonal.Value);
                 if (magnitude <= markowitz.AbsolutePivotThreshold)
                     continue;
 
@@ -67,13 +67,13 @@ namespace SpiceSharp.Algebra.Solve
                 var element = diagonal.Below;
                 while (element != null)
                 {
-                    largest = Math.Max(largest, markowitz.Magnitude(element.Value));
+                    largest = Math.Max(largest, Markowitz<T>.Magnitude(element.Value));
                     element = element.Below;
                 }
                 element = diagonal.Above;
                 while (element != null && element.Row >= eliminationStep)
                 {
-                    largest = Math.Max(largest, markowitz.Magnitude(element.Value));
+                    largest = Math.Max(largest, Markowitz<T>.Magnitude(element.Value));
                     element = element.Above;
                 }
                 if (magnitude <= markowitz.RelativePivotThreshold * largest)

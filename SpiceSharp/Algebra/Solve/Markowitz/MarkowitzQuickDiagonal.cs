@@ -52,7 +52,7 @@ namespace SpiceSharp.Algebra.Solve
                     continue;
 
                 // Get the magnitude
-                var magnitude = markowitz.Magnitude(diagonal.Value);
+                var magnitude = Markowitz<T>.Magnitude(diagonal.Value);
                 if (magnitude <= markowitz.AbsolutePivotThreshold)
                     continue;
 
@@ -69,8 +69,8 @@ namespace SpiceSharp.Algebra.Solve
                         if (otherInRow.Column == otherInColumn.Row)
                         {
                             var largest = Math.Max(
-                                markowitz.Magnitude(otherInRow.Value),
-                                markowitz.Magnitude(otherInColumn.Value));
+                                Markowitz<T>.Magnitude(otherInRow.Value),
+                                Markowitz<T>.Magnitude(otherInColumn.Value));
                             if (magnitude >= largest)
                                 return diagonal;
                         }
@@ -89,18 +89,18 @@ namespace SpiceSharp.Algebra.Solve
                 var largest = 0.0;
                 while (element != null)
                 {
-                    largest = Math.Max(largest, markowitz.Magnitude(element.Value));
+                    largest = Math.Max(largest, Markowitz<T>.Magnitude(element.Value));
                     element = element.Below;
                 }
                 element = chosen.Above;
                 while (element != null && element.Row >= eliminationStep)
                 {
-                    largest = Math.Max(largest, markowitz.Magnitude(element.Value));
+                    largest = Math.Max(largest, Markowitz<T>.Magnitude(element.Value));
                     element = element.Above;
                 }
 
                 // If we can't have stability, then drop the pivot
-                if (markowitz.Magnitude(chosen.Value) <= markowitz.RelativePivotThreshold * largest)
+                if (Markowitz<T>.Magnitude(chosen.Value) <= markowitz.RelativePivotThreshold * largest)
                     chosen = null;
             }
 

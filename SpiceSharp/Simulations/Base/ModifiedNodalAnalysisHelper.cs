@@ -13,9 +13,8 @@ namespace SpiceSharp.Simulations
         /// </summary>
         /// <typeparam name="T">The base value type.</typeparam>
         /// <param name="solver">The solver.</param>
-        /// <param name="magnitude">The method that converts the base value type to a scalar.</param>
         /// <exception cref="ArgumentNullException">solver</exception>
-        public static void PreorderModifiedNodalAnalysis<T>(this Solver<T> solver, Func<T, double> magnitude) where T : IFormattable, IEquatable<T>
+        public static void PreorderModifiedNodalAnalysis<T>(this Solver<T> solver) where T : IFormattable, IEquatable<T>
         {
             if (solver == null)
                 throw new ArgumentNullException(nameof(solver));
@@ -55,7 +54,7 @@ namespace SpiceSharp.Simulations
                 {
                     if (solver.ReorderedDiagonal(j) == null)
                     {
-                        var twins = CountTwins(solver, j, ref twin1, ref twin2, magnitude);
+                        var twins = CountTwins(solver, j, ref twin1, ref twin2);
                         if (twins == 1)
                         {
                             // Lone twins found, swap
@@ -77,7 +76,7 @@ namespace SpiceSharp.Simulations
                     {
                         if (solver.ReorderedDiagonal(j) == null)
                         {
-                            CountTwins(solver, j, ref twin1, ref twin2, magnitude);
+                            CountTwins(solver, j, ref twin1, ref twin2);
                             solver.MovePivot(twin2, j);
                             swapped = true;
                         }
@@ -122,9 +121,8 @@ namespace SpiceSharp.Simulations
         /// <param name="column">The column index.</param>
         /// <param name="twin1">The first twin element.</param>
         /// <param name="twin2">The second twin element.</param>
-        /// <param name="magnitude">The method that converts the base value type to a scalar.</param>
         /// <returns>The number of twins found.</returns>
-        private static int CountTwins<T>(Solver<T> solver, int column, ref MatrixElement<T> twin1, ref MatrixElement<T> twin2, Func<T, double> magnitude) where T : IFormattable, IEquatable<T>
+        private static int CountTwins<T>(Solver<T> solver, int column, ref MatrixElement<T> twin1, ref MatrixElement<T> twin2) where T : IFormattable, IEquatable<T>
         {
             var twins = 0;
 
@@ -134,13 +132,13 @@ namespace SpiceSharp.Simulations
             while (cTwin1 != null)
             {
                 // if (Math.Abs(pTwin1.Element.Magnitude) == 1.0)
-                if (magnitude(cTwin1.Value).Equals(1.0))
+                if (Algebra.Solve.Markowitz<T>.Magnitude(cTwin1.Value).Equals(1.0))
                 {
                     var row = cTwin1.Row;
                     var cTwin2 = solver.FirstInReorderedColumn(row);
                     while (cTwin2 != null && cTwin2.Row != column)
                         cTwin2 = cTwin2.Below;
-                    if (cTwin2 != null && magnitude(cTwin2.Value).Equals(1.0))
+                    if (cTwin2 != null && Algebra.Solve.Markowitz<T>.Magnitude(cTwin2.Value).Equals(1.0))
                     {
                         // Found symmetric twins. 
                         if (++twins >= 2) return twins;

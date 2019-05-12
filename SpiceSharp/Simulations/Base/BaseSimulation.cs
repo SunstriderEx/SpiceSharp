@@ -445,7 +445,7 @@ namespace SpiceSharp.Simulations
                 // Preorder matrix
                 if (!_isPreordered)
                 {
-                    solver.PreorderModifiedNodalAnalysis(Math.Abs);
+                    solver.PreorderModifiedNodalAnalysis();
                     _isPreordered = true;
                 }
                 if (state.Init == InitializationModes.Junction)

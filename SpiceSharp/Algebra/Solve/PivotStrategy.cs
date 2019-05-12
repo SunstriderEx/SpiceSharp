@@ -38,8 +38,7 @@ namespace SpiceSharp.Algebra.Solve
         /// <param name="matrix">The matrix.</param>
         /// <param name="rhs">The right-hand side vector.</param>
         /// <param name="eliminationStep">The current elimination step.</param>
-        /// <param name="magnitude">The method used to determine the magnitude of an element.</param>
-        public abstract void Setup(SparseMatrix<T> matrix, SparseVector<T> rhs, int eliminationStep, Func<T, double> magnitude);
+        public abstract void Setup(SparseMatrix<T> matrix, SparseVector<T> rhs, int eliminationStep);
 
         /// <summary>
         /// Move the pivot to the diagonal for this elimination step.

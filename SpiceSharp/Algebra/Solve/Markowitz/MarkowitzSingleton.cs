@@ -73,7 +73,7 @@ namespace SpiceSharp.Algebra.Solve
                     chosen = matrix.GetLastInColumn(index);
 
                     // Check if it is a valid pivot
-                    var magnitude = markowitz.Magnitude(chosen.Value);
+                    var magnitude = Markowitz<T>.Magnitude(chosen.Value);
                     if (magnitude > markowitz.AbsolutePivotThreshold)
                         return chosen;
                 }
@@ -98,18 +98,18 @@ namespace SpiceSharp.Algebra.Solve
                     var largest = 0.0;
                     while (element != null && element.Row >= eliminationStep)
                     {
-                        largest = Math.Max(largest, markowitz.Magnitude(element.Value));
+                        largest = Math.Max(largest, Markowitz<T>.Magnitude(element.Value));
                         element = element.Above;
                     }
                     element = chosen.Below;
                     while (element != null)
                     {
-                        largest = Math.Max(largest, markowitz.Magnitude(element.Value));
+                        largest = Math.Max(largest, Markowitz<T>.Magnitude(element.Value));
                         element = element.Below;
                     }
 
                     // Check if the pivot is valid
-                    var magnitude = markowitz.Magnitude(chosen.Value);
+                    var magnitude = Markowitz<T>.Magnitude(chosen.Value);
                     if (magnitude > markowitz.AbsolutePivotThreshold &&
                         magnitude > markowitz.RelativePivotThreshold * largest)
                         return chosen;

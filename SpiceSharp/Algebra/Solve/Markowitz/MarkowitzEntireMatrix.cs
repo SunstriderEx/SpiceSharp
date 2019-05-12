@@ -52,7 +52,7 @@ namespace SpiceSharp.Algebra.Solve
                 var element = matrix.GetLastInColumn(i);
                 while (element != null && element.Row >= eliminationStep)
                 {
-                    largest = Math.Max(largest, markowitz.Magnitude(element.Value));
+                    largest = Math.Max(largest, Markowitz<T>.Magnitude(element.Value));
                     element = element.Above;
                 }
                 if (largest.Equals(0.0))
@@ -63,7 +63,7 @@ namespace SpiceSharp.Algebra.Solve
                 while (element != null && element.Row >= eliminationStep)
                 {
                     // Find the magnitude and Markowitz product
-                    var magnitude = markowitz.Magnitude(element.Value);
+                    var magnitude = Markowitz<T>.Magnitude(element.Value);
                     var product = markowitz.RowCount(element.Row) * markowitz.ColumnCount(element.Column);
 
                     // In the case no valid pivot is available, at least return the largest element

@@ -295,7 +295,7 @@ namespace SpiceSharp.Algebra
             }
 
             // Setup for reordering
-            Strategy.Setup(Matrix, Rhs, step, Math.Abs);
+            Strategy.Setup(Matrix, Rhs, step);
 
             // Perform reordering and factorization starting from where we stopped last time
             for (; step <= Matrix.Size; step++)
